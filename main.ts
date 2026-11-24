@@ -1,15 +1,24 @@
 // One-line office joke for make.fun's "One-Line Office Joke: 24-Hour Sprint".
-// Prints the joke to stdout and writes the same line to entry.txt inside
-// the directory named by MAKEFUN_OUTPUT_DIR (the current directory when
-// the variable is unset, e.g. a run by hand).
+// The program writes exactly one joke, with no trailing newline, to
+// $MAKEFUN_OUTPUT_DIR/entry.txt (default /output/entry.txt), and echoes
+// the same line to stdout.
 
 const { mkdirSync, writeFileSync } = require("node:fs");
 const { join } = require("node:path");
 
 const joke =
-  "The meeting that should have been an email ran so long it got its own calendar invite.";
+  "The office printer only jams on documents marked urgent, which is how I know it can read.";
 
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? ".";
+if (
+  joke.length < 1 ||
+  joke.length > 200 ||
+  joke.includes("\n") ||
+  joke.trim() !== joke
+) {
+  throw new Error("joke must be a single line of 1 to 200 characters");
+}
+
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 mkdirSync(outputDir, { recursive: true });
-writeFileSync(join(outputDir, "entry.txt"), joke + "\n", "utf8");
+writeFileSync(join(outputDir, "entry.txt"), joke, "utf8");
 process.stdout.write(joke + "\n");
